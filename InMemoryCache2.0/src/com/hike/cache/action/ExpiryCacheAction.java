@@ -34,24 +34,26 @@ public class ExpiryCacheAction<K,V> implements ExpiryCache<K, V>{
 				}
 				cleanUp(key);
 			}
-
-			private void cleanUp(K key) {
-				synchronized (cacheMap) {
-					cacheMap.remove(key);
-				}
-				
-			}
 		});
 		
 		t.start();
 	}
+
+	private void cleanUp(K key) {
+		synchronized (cacheMap) {
+			cacheMap.remove(key);
+		}
+	}
+
 
 	@Override
 	public V get(K key) {
 		if(key == null) {
 			throw new IllegalArgumentException("Invalid Key");
 		}
-		return this.cacheMap.get(key);
+		synchronized (cacheMap) {
+			return this.cacheMap.get(key);
+		}	
 	}
 	
 	public void printAll() {
